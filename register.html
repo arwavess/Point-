@@ -3,173 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HP | Inscription</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>Charge Poin - Registre</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            margin: 0; 
-            min-height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            background: #000 url('IMG_6517.jpeg') no-repeat center center fixed;
-            background-size: cover; 
-            font-family: 'Poppins', sans-serif;
-        }
-        .register-card {
-            background: rgba(0, 0, 0, 0.85); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(30, 58, 138, 0.5); /* Bordure bleu foncé */
-            width: 100%; 
-            max-width: 420px;
-            box-sizing: border-box;
-        }
-        .input-group { 
-            background: #ffffff; /* Fond blanc pour faire ressortir le noir */
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            color: #000000; /* Écriture noire */
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-        .input-group:focus-within {
-            border-color: #1e3a8a; /* Focus bleu foncé */
-            box-shadow: 0 0 10px rgba(30, 58, 138, 0.4);
-        }
-        input { 
-            background: transparent; 
-            border: none; 
-            outline: none; 
-            color: #000000; /* Écriture noire */
-            width: 100%; 
-            padding: 18px; 
-            font-size: 16px; 
-        }
-        input::placeholder { color: rgba(0,0,0,0.5); }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f97316; color: #333; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .top-header { background-color: #f97316; color: #fff; padding: 15px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .back-btn { position: absolute; left: 15px; color: #fff; text-decoration: none; font-size: 18px; }
+        .brand-title { font-size: 18px; font-weight: 500; }
+        
+        .main-container { background-color: #fff; flex: 1; border-top-left-radius: 40px; padding: 25px 20px; margin-top: 10px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-label { font-size: 14px; color: #333; font-weight: 400; margin-bottom: 8px; display: block; }
+        .input-wrapper { position: relative; display: flex; align-items: center; border-bottom: 1px solid #e0e0e0; padding-bottom: 8px; }
+        
+        .input-icon { color: #f97316; font-size: 16px; margin-right: 10px; }
+        
+        .form-input { width: 100%; border: none; outline: none; font-size: 14px; color: #333; background: transparent; }
+        .form-input::placeholder { color: #aaa; }
+        .prefix-phone { color: #aaa; font-size: 14px; margin-right: 5px; }
+        .captcha-row { display: flex; align-items: center; justify-content: space-between; }
+        .captcha-input-wrap { flex: 1; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; padding-bottom: 8px; margin-right: 15px; }
+        .captcha-box { background: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; padding: 6px 12px; font-size: 20px; font-weight: 900; font-style: italic; letter-spacing: 3px; color: #333; user-select: none; cursor: pointer; min-width: 100px; text-align: center; }
+        
+        .btn-submit { width: 100%; background: #f97316; color: #fff; border: none; padding: 14px; border-radius: 30px; font-size: 16px; font-weight: 500; cursor: pointer; text-align: center; margin-top: 30px; box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3); }
+        .btn-submit:active { opacity: 0.8; }
+        
+        .auth-footer { text-align: center; margin-top: 20px; font-size: 13px; color: #666; }
+        .auth-footer a { color: #f97316; text-decoration: none; font-weight: 600; }
     </style>
 </head>
-<body class="p-4">
+<body>
 
-    <div class="register-card p-8 sm:p-10 rounded-[2.5rem] shadow-2xl">
-        <div class="mb-8 text-center">
-            <h1 class="text-4xl font-black tracking-tight text-white uppercase">HP</h1>
-            <p class="text-[11px] uppercase tracking-[0.4em] text-blue-400 mt-2 font-bold">Nouveau Compte RDC</p>
+    <div class="top-header">
+        <a href="index.html" class="back-btn"><i class="fas fa-chevron-left"></i></a>
+        <div class="brand-title">S'inscrire</div>
+    </div>
+
+    <div class="main-container">
+        <div class="form-group">
+            <label class="form-label">Mobile</label>
+            <div class="input-wrapper">
+                <i class="fas fa-mobile-alt input-icon"></i>
+                <span class="prefix-phone">+243</span>
+                <input type="tel" id="phone" class="form-input" placeholder="Veuillez entrer un compte mobile" maxlength="10">
+            </div>
         </div>
 
-        <form id="regForm" class="space-y-5">
-            <div>
-                <label class="text-[11px] uppercase font-black text-white ml-1 tracking-widest block mb-1">Numéro (+243)</label>
-                <div class="input-group px-4 rounded-2xl">
-                    <span class="text-black font-bold text-lg select-none">+243</span>
-                    <input type="tel" id="tel" placeholder="812345678" maxlength="9" required>
-                </div>
+        <div class="form-group">
+            <label class="form-label">Mot De Passe</label>
+            <div class="input-wrapper">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="password" class="form-input" placeholder="S'il vous plaît mot de passe d'entrée">
             </div>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="text-[11px] uppercase font-black text-white ml-1 tracking-widest block mb-1">Mot de passe</label>
-                    <div class="input-group rounded-2xl">
-                        <input type="password" id="p1" placeholder="Mot de passe (6 car.)" maxlength="6" required>
-                    </div>
-                </div>
-                <div>
-                    <label class="text-[11px] uppercase font-black text-white ml-1 tracking-widest block mb-1">Confirmation</label>
-                    <div class="input-group rounded-2xl">
-                        <input type="password" id="p2" placeholder="Confirmer mot de passe" maxlength="6" required>
-                    </div>
-                </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Confirmer Le Mot De Passe</label>
+            <div class="input-wrapper">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="confirmPassword" class="form-input" placeholder="Veuillez entrer à nouveau le mot de passe">
             </div>
+        </div>
 
-            <div class="pt-2">
-                <label class="text-[11px] uppercase font-black text-white ml-1 tracking-widest block mb-1">Code Invitation</label>
-                <div class="input-group rounded-2xl">
-                    <!-- Restriction de saisie aux lettres minuscules et 6 caractères max -->
-                    <input type="text" id="inv" placeholder="6 lettres minuscules" class="font-bold text-blue-900 text-center text-lg tracking-widest" maxlength="6" oninput="this.value = this.value.toLowerCase().replace(/[^a-z]/g, '')" required>
-                </div>
+        <div class="form-group">
+            <label class="form-label">Code D'invitation</label>
+            <div class="input-wrapper">
+                <i class="fas fa-check-circle input-icon" style="color: #f97316;"></i>
+                <input type="text" id="inviteCode" class="form-input" value="P26kSI">
             </div>
+        </div>
 
-            <button type="submit" id="submitBtn" class="bg-blue-900 text-white font-black w-full py-5 rounded-2xl text-[14px] uppercase mt-6 shadow-xl hover:bg-blue-950 active:scale-95 transition-all block text-center">
-                Créer mon compte
-            </button>
-        </form>
+        <div class="form-group">
+            <label class="form-label">Code De Vérification</label>
+            <div class="captcha-row">
+                <div class="captcha-input-wrap">
+                    <i class="fas fa-mobile-alt input-icon"></i>
+                    <input type="text" id="captchaInput" class="form-input" placeholder="Code de vérification" maxlength="4">
+                </div>
+                <div class="captcha-box" id="captchaDisplay" onclick="generateCaptcha()" title="Cliquer pour changer">6453</div>
+            </div>
+        </div>
 
-        <div class="mt-8 text-center text-white/80 text-sm">
-            Déjà inscrit ? <a href="index.html" class="text-blue-400 font-bold underline ml-1">Se connecter</a>
+        <button type="button" class="btn-submit" onclick="registerUser()">
+            Inscrivez-vous
+        </button>
+
+        <div class="auth-footer">
+            Vous avez déjà un compte ? <a href="index.html">Se connecter</a>
         </div>
     </div>
 
     <script>
-        // --- 1. FONCTION POUR RÉCUPÉRER LE CODE DANS L'URL ---
-        window.onload = function() {
+        // Le lien Firebase est bien configuré ici sans le slash final pour que les requêtes fonctionnent correctement.
+        const dbUrl = "https://sonyy-9b565-default-rtdb.firebaseio.com";
+        let generatedCaptcha = "6453";
+
+        function generateCaptcha() {
+            generatedCaptcha = Math.floor(1000 + Math.random() * 9000).toString();
+            document.getElementById('captchaDisplay').innerText = generatedCaptcha;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateCaptcha();
             const urlParams = new URLSearchParams(window.location.search);
-            const refCode = urlParams.get('ref'); 
-            
-            if (refCode) {
-                const invInput = document.getElementById('inv');
-                // On s'assure que le code récupéré dans l'URL est aussi forcé en minuscules et limité à 6 lettres
-                invInput.value = refCode.toLowerCase().replace(/[^a-z]/g, '').substring(0, 6);
-                console.log("Code de parrainage détecté : " + refCode);
+            const refParam = urlParams.get('ref');
+            if (refParam) {
+                document.getElementById('inviteCode').value = refParam.trim();
             }
-        };
-
-        // --- 2. GESTION DE L'INSCRIPTION ---
-        document.getElementById('regForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const phone = document.getElementById('tel').value;
-            const pass1 = document.getElementById('p1').value;
-            const pass2 = document.getElementById('p2').value;
-            const inviteCode = document.getElementById('inv').value;
-            const btn = document.getElementById('submitBtn');
-
-            if(pass1.length < 6) {
-                alert("❌ Le mot de passe doit faire au moins 6 caractères.");
-                return;
-            }
-
-            if(pass1 !== pass2) {
-                alert("❌ Les mots de passe ne correspondent pas !");
-                return;
-            }
-
-            // Vérification stricte : exactement 6 lettres minuscules
-            const inviteRegex = /^[a-z]{6}$/;
-            if(!inviteRegex.test(inviteCode)) {
-                alert("❌ Le code d'invitation doit être composé d'exactement 6 lettres minuscules.");
-                return;
-            }
-
-            btn.innerText = "PATIENTEZ...";
-            btn.disabled = true;
-
-            const userData = {
-                telephone: "+243" + phone,
-                motDePasse: pass1,
-                parrain: inviteCode, 
-                solde: 0,
-                dateInscription: new Date().toISOString(),
-                status: "Actif"
-            };
-
-            fetch('https://sonyy-9b565-default-rtdb.firebaseio.com/utilisateurs.json', {
-                method: 'POST',
-                body: JSON.stringify(userData)
-            })
-            .then(res => {
-                if(res.ok) {
-                    alert("✅ Bienvenue sur HP RDC !");
-                    window.location.href = "index.html";
-                } else { throw new Error(); }
-            })
-            .catch(() => {
-                alert("❌ Erreur. Vérifiez votre connexion.");
-                btn.innerText = "CRÉER MON COMPTE";
-                btn.disabled = false;
-            });
         });
+
+        function generateUserInviteCode() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz';
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return code;
+        }
+
+        async function registerUser() {
+            let phoneInput = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+            const inviteCodeInput = document.getElementById('inviteCode').value.trim();
+            const captchaInput = document.getElementById('captchaInput').value.trim();
+
+            if (!phoneInput || phoneInput.length < 9) {
+                alert("Veuillez entrer un numéro de téléphone valide.");
+                return;
+            }
+
+            if(!phoneInput.startsWith("+243")) {
+                if(phoneInput.startsWith("0")) phoneInput = "+243" + phoneInput.substring(1);
+                else phoneInput = "+243" + phoneInput;
+            }
+
+            if (!password || password.length < 4) {
+                alert("Le mot de passe doit contenir au moins 4 caractères.");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert("Les mots de passe ne correspondent pas.");
+                return;
+            }
+
+            if (captchaInput !== generatedCaptcha) {
+                alert("Code de vérification incorrect.");
+                generateCaptcha();
+                document.getElementById('captchaInput').value = "";
+                return;
+            }
+
+            try {
+                const checkRes = await fetch(`${dbUrl}/utilisateurs.json`);
+                const allUsers = await checkRes.json();
+                
+                let phoneExists = false;
+                if(allUsers) {
+                    for(let id in allUsers) {
+                        if(allUsers[id].telephone === phoneInput) {
+                            phoneExists = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (phoneExists) {
+                    alert("Ce numéro de téléphone est déjà enregistré.");
+                    return;
+                }
+
+                const myInviteCode = generateUserInviteCode();
+                
+                const newUser = {
+                    telephone: phoneInput,
+                    password: password,
+                    parrain: inviteCodeInput || "",
+                    inviteCode: myInviteCode,
+                    solde: 0,
+                    revenuCumule: 0,
+                    totalRecharge: 0,
+                    totalRetrait: 0,
+                    level: "Lv1",
+                    dateInscription: new Date().toLocaleDateString()
+                };
+
+                const saveRes = await fetch(`${dbUrl}/utilisateurs.json`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newUser)
+                });
+
+                if (saveRes.ok) {
+                    alert("Inscription réussie ! Veuillez vous connecter.");
+                    window.location.href = "index.html";
+                } else {
+                    alert("Erreur lors de l'enregistrement. Veuillez réessayer.");
+                }
+
+            } catch (err) {
+                console.error("Erreur technique :", err);
+                alert("Impossible de contacter le serveur de base de données.");
+            }
+        }
     </script>
 </body>
 </html>
