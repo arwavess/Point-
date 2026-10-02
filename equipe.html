@@ -23,7 +23,7 @@
     </div>
 
     <div class="space-y-6">
-        <!-- Section d'invitation avec votre lien exact -->
+        <!-- Section d'invitation avec le code Firebase -->
         <div class="glass-card p-6">
             <p class="text-[11px] font-black text-gray-400 uppercase mb-4 tracking-widest text-center">Invitez vos amis</p>
             <div class="bg-orange-50/50 p-4 rounded-2xl border border-dashed border-orange-200 mb-4 flex items-center justify-between">
@@ -75,21 +75,8 @@
 
         if(!session) window.location.href = "index.html";
 
-        // Génération d'un code aléatoire de 6 lettres minuscules si non présent
-        function generate6LetterCode() {
-            const chars = 'abcdefghijklmnopqrstuvwxyz';
-            let result = '';
-            for (let i = 0; i < 6; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        }
-
-        // Récupération du code parrain existant dans la session ou génération de 6 lettres minuscules
-        const myInviteCode = (session.codeParrain || session.code || session.inviteCode || generate6LetterCode()).toLowerCase();
-        
-        document.getElementById('codeSpan').innerText = myInviteCode;
-        document.getElementById('linkSpan').innerText = "https://arwavess.github.io/Point-/register.html?ref=" + myInviteCode;
+        // Valeur par défaut en attendant la récupération de Firebase
+        let myInviteCode = "------";
 
         function copyInvite() {
             navigator.clipboard.writeText(document.getElementById('linkSpan').innerText);
@@ -108,13 +95,38 @@
             try {
                 const res = await fetch(`${dbURL}/utilisateurs.json`);
                 const allUsers = await res.json();
+                
+                // 1. Récupération du champ exact "inviteCode" (ex: xcendj) dans Firebase pour l'utilisateur connecté[span_0](start_span)[span_0](end_span)
+                if (allUsers) {
+                    for (let id in allUsers) {
+                        // On identifie le nœud de l'utilisateur actif grâce à son numéro de téléphone
+                        if (allUsers[id].telephone === session.telephone) {
+                            if (allUsers[id].inviteCode) {
+                                myInviteCode = allUsers[id].inviteCode;
+                                
+                                // Mise à jour de l'interface avec les données extraites
+                                document.getElementById('codeSpan').innerText = myInviteCode;
+                                document.getElementById('linkSpan').innerText = "https://arwavess.github.io/Point-/register.html?ref=" + myInviteCode;
+                                
+                                // Optionnel : mise à jour de la session locale pour fluidifier les prochaines connexions
+                                session.inviteCode = myInviteCode;
+                                localStorage.setItem('sonny_session', JSON.stringify(session));
+                            }
+                            break;
+                        }
+                    }
+                }
+
                 let members = [];
                 let totalCommCalculated = 0;
 
-                for (let id in allUsers) {
-                    if (allUsers[id].parrain === myInviteCode) {
-                        members.push(allUsers[id]);
-                        totalCommCalculated += (allUsers[id].commissionsGenerees || 0);
+                // 2. Recherche des membres de l'équipe (ceux dont le 'parrain' correspond à l'inviteCode extrait)
+                if (myInviteCode !== "------") {
+                    for (let id in allUsers) {
+                        if (allUsers[id].parrain === myInviteCode) {
+                            members.push(allUsers[id]);
+                            totalCommCalculated += (allUsers[id].commissionsGenerees || 0);
+                        }
                     }
                 }
 
