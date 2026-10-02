@@ -75,8 +75,19 @@
 
         if(!session) window.location.href = "index.html";
 
-        // Initialisation avec le nouveau lien exact de déploiement GitHub Pages
-        const myInviteCode = session.telephone.replace("+243", "CP");
+        // Génération d'un code aléatoire de 6 lettres minuscules si non présent
+        function generate6LetterCode() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz';
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Récupération du code parrain existant dans la session ou génération de 6 lettres minuscules
+        const myInviteCode = (session.codeParrain || session.code || session.inviteCode || generate6LetterCode()).toLowerCase();
+        
         document.getElementById('codeSpan').innerText = myInviteCode;
         document.getElementById('linkSpan').innerText = "https://arwavess.github.io/Point-/register.html?ref=" + myInviteCode;
 
@@ -115,7 +126,7 @@
                 } else {
                     list.innerHTML = "";
                     members.forEach(m => {
-                        const maskPhone = m.telephone.substring(0, 7) + "****";
+                        const maskPhone = m.telephone ? m.telephone.substring(0, 7) + "****" : "Utilisateur";
                         list.innerHTML += `
                             <div class="member-item">
                                 <div>
