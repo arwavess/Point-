@@ -8,39 +8,40 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #ffffff; font-family: 'Poppins', sans-serif; margin: 0; padding-bottom: 100px; }
+        body { background-color: #f8fafc; font-family: 'Poppins', sans-serif; margin: 0; padding-bottom: 120px; }
         
-        .profile-header {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('IMG_6519.jpeg');
-            background-size: cover; background-position: center;
-            height: 240px; color: white; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            border-bottom-left-radius: 3rem; border-bottom-right-radius: 3rem;
+        /* En-tête dégradé Orange & Noir */
+        .profile-top-bar {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            color: white; padding: 25px 20px 40px 20px;
+            border-bottom-left-radius: 2.5rem; border-bottom-right-radius: 2.5rem;
         }
 
-        .avatar-circle {
-            width: 85px; height: 85px; background: rgba(249, 115, 22, 0.2);
-            backdrop-filter: blur(15px); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            border: 3px solid #f97316; margin-bottom: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        .wallet-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+            margin: -25px 20px 20px 20px; position: relative; z-index: 10;
         }
 
-        .balance-card {
-            background: white; border-radius: 30px; margin: -50px 20px 20px 20px;
-            padding: 30px; text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05); position: relative; z-index: 10;
+        /* Cartes Portefeuilles Orange et Sombre */
+        .wallet-card {
+            background: linear-gradient(135deg, #fb923c, #f97316);
+            border-radius: 22px; padding: 20px; color: white;
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.25);
+            position: relative; overflow: hidden;
+        }
+        .wallet-card::after {
+            content: ''; position: absolute; top: -10px; right: -10px;
+            width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%;
         }
 
-        .icon-menu {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            margin-top: 25px; padding-top: 25px; border-top: 1px solid #f8f8f8;
+        .data-panel-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
         }
-        .icon-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-        .icon-item i { font-size: 26px; color: #f97316; transition: scale 0.2s; }
-        .icon-item:active i { scale: 0.9; }
-        .icon-item span { font-size: 9px; color: #6b7280; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .data-box {
+            background: white; border: 1px solid #f1f5f9; border-radius: 20px;
+            padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
 
         .product-card {
             background: #ffffff; border: 1px solid #f1f1f1; border-radius: 22px;
@@ -62,33 +63,106 @@
 </head>
 <body>
 
-    <!-- Section Profil -->
-    <div class="profile-header">
-        <div class="avatar-circle">
-            <i class="fas fa-user-tie text-4xl text-white"></i>
+    <!-- En-tête style Modèle Orange -->
+    <div class="profile-top-bar">
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
+                    <i class="fas fa-user text-xl text-white"></i>
+                </div>
+                <div>
+                    <h2 class="font-black text-sm tracking-tight" id="userPhone">000000000</h2>
+                    <p class="text-[10px] opacity-80 uppercase tracking-widest">Partenaire Charge Point</p>
+                </div>
+            </div>
+            <!-- Badge VIP -->
+            <div class="bg-amber-400 text-amber-950 font-black text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
+                <i class="fa-solid fa-gem text-[10px]"></i> vip0
+            </div>
         </div>
-        <h2 class="font-black text-2xl uppercase tracking-tight" id="userName">Chargement...</h2>
-        <p class="text-[11px] font-bold opacity-90 tracking-[0.2em]" id="userPhone">ID: +243 -- --- ----</p>
     </div>
 
-    <!-- Carte Solde & Raccourcis -->
-    <div class="balance-card">
-        <p class="text-gray-400 text-[10px] uppercase font-black tracking-[0.2em] mb-2">Solde Disponible</p>
-        <h1 id="displaySolde" class="text-4xl font-black text-gray-900">0 CDF</h1>
+    <!-- Cartes Portefeuilles (Balance & Recharge) -->
+    <div class="wallet-grid">
+        <div class="wallet-card">
+            <p class="text-[10px] uppercase font-bold tracking-wider opacity-90 mb-1">Balance portefeuille</p>
+            <h3 id="displaySolde" class="text-xl font-black truncate">0 CDF</h3>
+        </div>
+        <div class="wallet-card" style="background: linear-gradient(135deg, #1f2937, #111827); shadow: 0 10px 25px rgba(0,0,0,0.3);">
+            <p class="text-[10px] uppercase font-bold tracking-wider opacity-90 mb-1">Portefeuille de recharge</p>
+            <h3 id="displayRecharge" class="text-xl font-black truncate text-orange-400">0 CDF</h3>
+        </div>
+    </div>
+
+    <!-- Raccourcis rapides (Recharger / Retirer / Historique) -->
+    <div class="px-6 mb-6">
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex justify-around">
+            <div onclick="window.location.href='recharge.html'" class="flex flex-col items-center gap-1 cursor-pointer">
+                <div class="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-sack-dollar"></i>
+                </div>
+                <span class="text-[9px] font-black uppercase text-gray-600">Recharger</span>
+            </div>
+            <div onclick="window.location.href='retrait.html'" class="flex flex-col items-center gap-1 cursor-pointer">
+                <div class="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                </div>
+                <span class="text-[9px] font-black uppercase text-gray-600">Retirer</span>
+            </div>
+            <div onclick="window.location.href='historique.html'" class="flex flex-col items-center gap-1 cursor-pointer">
+                <div class="w-10 h-10 bg-orange-50 text-orange-500 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                </div>
+                <span class="text-[9px] font-black uppercase text-gray-600">Historique</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Panneau de données -->
+    <div class="px-6 mb-8">
+        <h3 class="text-[11px] font-black uppercase text-gray-400 tracking-widest mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-chart-pie text-orange-500"></i> Panneau de données
+        </h3>
         
-        <div class="icon-menu">
-            <div class="icon-item" onclick="window.location.href='recharge.html'">
-                <i class="fa-solid fa-sack-dollar"></i>
-                <span>Recharger</span>
+        <div class="data-panel-grid">
+            <div class="data-box">
+                <p class="text-[9px] font-black uppercase text-gray-400 mb-1">Recharge totale</p>
+                <h4 id="statRechargeTotale" class="text-lg font-black text-gray-800">0 CDF</h4>
             </div>
-            <div class="icon-item" onclick="window.location.href='retrait.html'">
-                <i class="fa-solid fa-cash-register"></i>
-                <span>Retirer</span>
+            <div class="data-box">
+                <p class="text-[9px] font-black uppercase text-gray-400 mb-1">Retrait total</p>
+                <h4 id="statRetraitTotal" class="text-lg font-black text-gray-800">0 CDF</h4>
             </div>
-            <div class="icon-item" onclick="window.location.href='historique.html'">
-                <i class="fa-solid fa-clipboard-list"></i>
-                <span>Historique</span>
+            <div class="data-box">
+                <p class="text-[9px] font-black uppercase text-gray-400 mb-1">Revenu total</p>
+                <h4 id="statRevenuTotal" class="text-lg font-black text-gray-800">0 CDF</h4>
             </div>
+            <div class="data-box">
+                <p class="text-[9px] font-black uppercase text-gray-400 mb-1">Total des actifs</p>
+                <h4 id="statTotalActifs" class="text-lg font-black text-gray-800">0</h4>
+            </div>
+            <div class="data-box">
+                <p class="text-[9px] font-black uppercase text-gray-400 mb-1">Revenu d'aujourd'hui</p>
+                <h4 id="statRevenuJour" class="text-lg font-black text-gray-800">0 CDF</h4>
+            </div>
+            <div class="data-box">
+                <p class="text-[9px] font-black uppercase text-gray-400 mb-1">Revenu de l'équipe</p>
+                <h4 id="statRevenuEquipe" class="text-lg font-black text-gray-800">0 CDF</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Téléchargement Application Android -->
+    <div class="px-6 mb-8">
+        <div class="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-5 text-white shadow-lg flex items-center justify-between">
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-widest text-orange-400 mb-1"><i class="fa-solid fa-mobile-screen-button"></i> Application Mobile</p>
+                <h4 class="text-sm font-black uppercase">Télécharger CHARGE POINT APK</h4>
+                <p class="text-[9px] text-gray-300 mt-0.5">Installez l'application directement sur Android</p>
+            </div>
+            <a href="ChargePoint.apk" download="ChargePoint.apk" class="bg-orange-500 hover:bg-orange-600 text-white text-xs font-black px-4 py-3 rounded-2xl shadow-md active:scale-95 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-download"></i> Télécharger
+            </a>
         </div>
     </div>
 
@@ -123,7 +197,7 @@
                     </select>
                 </div>
 
-                <button id="btnSaveRetrait" onclick="saveRetraitInfos()" class="w-full bg-gray-900 text-white text-[10px] font-black uppercase tracking-wider py-3 rounded-xl shadow-md active:scale-95 transition-all mt-2">
+                <button id="btnSaveRetrait" onclick="saveRetraitInfos()" class="w-full bg-orange-500 text-white text-[10px] font-black uppercase tracking-wider py-3 rounded-xl shadow-md active:scale-95 transition-all mt-2">
                     Lier définitivement mon compte
                 </button>
                 <p id="infoVerrouillage" class="text-[8px] font-bold text-center text-red-400 uppercase tracking-wider mt-1 hidden">⚠️ Ces informations sont liées à vie et ne peuvent plus être modifiées.</p>
@@ -132,23 +206,21 @@
     </div>
 
     <!-- Centre de Support & Outils -->
-    <div class="px-6 space-y-4">
-        <!-- Service Client officiel Telegram -->
-        <a href="https://t.me/blax_sev" target="_blank" class="flex items-center justify-between bg-[#0088cc] text-white p-4 rounded-2xl shadow-md active:scale-[0.98] transition-all">
+    <div class="px-6 space-y-4 mb-8">
+        <a href="https://chat.whatsapp.com/DsCunfycojmHx3oqLbKGGb?mode=gi_t" target="_blank" class="flex items-center justify-between bg-[#25D366] text-white p-4 rounded-2xl shadow-md active:scale-[0.98] transition-all">
             <div class="flex items-center gap-3">
-                <i class="fab fa-telegram-plane text-2xl"></i>
+                <i class="fab fa-whatsapp text-2xl"></i>
                 <div>
                     <p class="text-xs font-black uppercase tracking-tight">Service Client</p>
-                    <p class="text-[9px] font-bold opacity-80">Une question ? Contactez notre support 24h/7j</p>
+                    <p class="text-[9px] font-bold opacity-90">Rejoignez notre groupe WhatsApp officiel 24h/7j</p>
                 </div>
             </div>
             <i class="fa-solid fa-chevron-right text-xs opacity-70"></i>
         </a>
 
-        <!-- Raccourci vers l'espace de récolte des machines -->
-        <div onclick="window.location.href='mes_produits.html'" class="flex items-center justify-between bg-orange-500 text-white p-4 rounded-2xl shadow-md cursor-pointer active:scale-[0.98] transition-all">
+        <div onclick="window.location.href='mes_produits.html'" class="flex items-center justify-between bg-gray-900 text-white p-4 rounded-2xl shadow-md cursor-pointer active:scale-[0.98] transition-all">
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-gas-pump text-2xl"></i>
+                <i class="fa-solid fa-server text-2xl text-orange-500"></i>
                 <div>
                     <p class="text-xs font-black uppercase tracking-tight">Espace Récolte</p>
                     <p class="text-[9px] font-bold opacity-90">Cliquez ici pour récupérer vos revenus quotidiens</p>
@@ -158,23 +230,9 @@
         </div>
     </div>
 
-    <!-- Liste descriptive des équipements en cours -->
-    <div class="px-6 mt-8">
-        <div class="flex justify-between items-center mb-5">
-            <h3 class="text-[11px] font-black uppercase text-gray-400 tracking-widest flex items-center gap-2">
-                <i class="fa-solid fa-circle-nodes text-orange-500"></i> Mes installations (22j)
-            </h3>
-            <span class="bg-orange-50 text-orange-600 text-[9px] font-black px-3 py-1 rounded-full uppercase italic">Actif</span>
-        </div>
-        
-        <div id="listeMesProduits" class="space-y-3">
-            <div class="text-center py-10 opacity-20">
-                <i class="fa-solid fa-circle-notch fa-spin text-3xl text-orange-500"></i>
-            </div>
-        </div>
-
-        <!-- Bouton déconnexion standardisé -->
-        <button onclick="logout()" class="w-full mt-8 py-4 border-2 border-red-100 text-red-500 text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl hover:bg-red-50 active:scale-95 transition-all">
+    <!-- Bouton déconnexion -->
+    <div class="px-6">
+        <button onclick="logout()" class="w-full py-4 border-2 border-red-100 text-red-500 text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl hover:bg-red-50 active:scale-95 transition-all">
             Déconnexion
         </button>
     </div>
@@ -182,7 +240,7 @@
     <!-- Barre de navigation inférieure -->
     <nav class="bottom-nav">
         <a href="dashboard.html" class="nav-link"><i class="fa-solid fa-house text-2xl mb-1"></i><br>Accueil</a>
-        <a href="produit.html" class="nav-link"><i class="fa-solid fa-gas-pump text-2xl mb-1"></i><br>Produit</a>
+        <a href="produit.html" class="nav-link"><i class="fa-solid fa-server text-2xl mb-1"></i><br>Produits</a>
         <a href="equipe.html" class="nav-link"><i class="fa-solid fa-users text-2xl mb-1"></i><br>Équipe</a>
         <a href="compte.html" class="nav-link active"><i class="fa-solid fa-user text-2xl mb-1"></i><br>Compte</a>
     </nav>
@@ -196,34 +254,48 @@
 
         async function initProfile() {
             try {
-                // 1. Infos de base utilisateur
-                document.getElementById('userName').innerText = "Partenaire Charge Point";
-                document.getElementById('userPhone').innerText = "ID: " + session.telephone;
+                document.getElementById('userPhone').innerText = session.telephone;
 
-                // 2. Synchronisation et affichage du solde réel + chargement infos retrait
+                // 1. Récupération des données utilisateur de Firebase
                 const uRes = await fetch(`${dbURL}/utilisateurs/${session.firebaseId}.json`);
                 const user = await uRes.json();
-                document.getElementById('displaySolde').innerText = user.solde.toLocaleString() + " CDF";
+                
+                document.getElementById('displaySolde').innerText = (user.solde || 0).toLocaleString() + " CDF";
+                document.getElementById('displayRecharge').innerText = (user.rechargePortefeuille || user.solde || 0).toLocaleString() + " CDF";
 
-                // Gestion de la liaison définitive unique
+                // Panneau de données
+                document.getElementById('statRechargeTotale').innerText = (user.rechargeTotale || 0).toLocaleString() + " CDF";
+                document.getElementById('statRetraitTotal').innerText = (user.retraitTotal || 0).toLocaleString() + " CDF";
+                document.getElementById('statRevenuTotal').innerText = (user.revenuTotal || 0).toLocaleString() + " CDF";
+                document.getElementById('statRevenuJour').innerText = (user.revenuJour || 0).toLocaleString() + " CDF";
+                document.getElementById('statRevenuEquipe').innerText = (user.revenuEquipe || 0).toLocaleString() + " CDF";
+
+                // 2. Récupération des investissements (pour total des actifs)
+                const iRes = await fetch(`${dbURL}/investissements/${session.firebaseId}.json`);
+                const products = await iRes.json();
+                let totalActifsCount = 0;
+                if(products) {
+                    totalActifsCount = Object.keys(products).length;
+                }
+                document.getElementById('statTotalActifs').innerText = totalActifsCount;
+
+                // Liaison du compte
                 if(user.retraitNom && user.retraitPhone && user.retraitReseau) {
                     isAccountLinked = true;
                     document.getElementById('retraitNom').value = user.retraitNom;
                     document.getElementById('retraitPhone').value = user.retraitPhone;
                     document.getElementById('retraitReseau').value = user.retraitReseau;
                     
-                    // Verrouillage des inputs
                     document.getElementById('retraitNom').disabled = true;
                     document.getElementById('retraitPhone').disabled = true;
                     document.getElementById('retraitReseau').disabled = true;
                     
-                    // Ajustements visuels de verrouillage
                     document.getElementById('btnSaveRetrait').style.display = "none";
                     document.getElementById('infoVerrouillage').classList.remove('hidden');
                     
                     const badge = document.getElementById('statutLiaison');
                     badge.innerText = "Lié";
-                    badge.className = "text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider bg-green-50 text-green-600";
+                    badge.className = "text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider bg-orange-50 text-orange-600";
                     badge.classList.remove('hidden');
                 } else {
                     const badge = document.getElementById('statutLiaison');
@@ -231,53 +303,16 @@
                     badge.className = "text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider bg-amber-50 text-amber-600";
                     badge.classList.remove('hidden');
                 }
-
-                // 3. Affichage des investissements réels
-                const iRes = await fetch(`${dbURL}/investissements/${session.firebaseId}.json`);
-                const products = await iRes.json();
-
-                const container = document.getElementById('listeMesProduits');
-                container.innerHTML = "";
-
-                if (!products || Object.keys(products).length === 0) {
-                    container.innerHTML = `
-                        <div class="text-center py-12 opacity-40 border-2 border-dashed border-gray-100 rounded-[2.5rem] bg-gray-50/50">
-                            <i class="fa-solid fa-box-open text-5xl mb-3 text-gray-300"></i>
-                            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">Aucune pompe installée</p>
-                            <a href="produit.html" class="text-orange-500 text-[9px] font-black underline mt-2 block">VISITER LA BOUTIQUE</a>
-                        </div>`;
-                } else {
-                    for (let key in products) {
-                        const p = products[key];
-                        container.innerHTML += `
-                            <div class="product-card">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-500 shadow-sm">
-                                        <i class="fa-solid fa-gas-pump text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-black text-xs uppercase text-gray-800 tracking-tighter">${p.nom}</p>
-                                        <p class="text-[9px] text-green-600 font-bold italic">+${p.gainJournalier.toLocaleString()} CDF / 24H</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-[8px] font-black text-gray-400 uppercase mb-1">Statut</p>
-                                    <span class="text-[9px] font-black text-orange-500 bg-orange-50 px-2 py-1 rounded-md uppercase">En Ligne</span>
-                                </div>
-                            </div>`;
-                    }
-                }
             } catch (e) { console.error(e); }
         }
 
-        // Sauvegarde des informations de retrait (Verrouillage à vie)
         async function saveRetraitInfos() {
             if(isAccountLinked) {
                 alert("⛔ Vos informations de retrait sont verrouillées de manière définitive.");
                 return;
             }
 
-            const nom = document.getElementById('retraitNom').value.trim();
+            const nom = document.getElementById('retraitNom').value.trim();  
             const phone = document.getElementById('retraitPhone').value.trim();
             const reseau = document.getElementById('retraitReseau').value;
 
@@ -286,38 +321,22 @@
                 return;
             }
 
-            const confirmation = confirm("⚠️ ATTENTION : Êtes-vous sûr de vos informations ? Une fois votre compte lié, vous ne pourrez plus JAMAIS changer ces coordonnées de retrait.");
-            if(!confirmation) return;
+            if(!confirm("⚠️ ATTENTION : Êtes-vous sûr de vos informations ? Une fois votre compte lié, vous ne pourrez plus JAMAIS changer ces coordonnées.")) return;
 
             try {
-                // Double vérification instantanée de sécurité sur la db avant envoi
-                const checkRes = await fetch(`${dbURL}/utilisateurs/${session.firebaseId}.json`);
-                const checkUser = await checkRes.json();
-                
-                if(checkUser.retraitPhone) {
-                    alert("⛔ Ce compte possède déjà des informations de retrait enregistrées.");
-                    window.location.reload();
-                    return;
-                }
-
                 const response = await fetch(`${dbURL}/utilisateurs/${session.firebaseId}.json`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        retraitNom: nom,
-                        retraitPhone: phone,
-                        retraitReseau: reseau
-                    })
+                    body: JSON.stringify({ retraitNom: nom, retraitPhone: phone, retraitReseau: reseau })
                 });
 
                 if(response.ok) {
-                    alert("✅ Votre compte de retrait a été lié avec succès et est définitivement verrouillé !");
+                    alert("✅ Compte de retrait lié et verrouillé avec succès !");
                     window.location.reload();
                 } else {
-                    alert("❌ Une erreur est survenue lors de l'enregistrement.");
+                    alert("❌ Erreur lors de l'enregistrement.");
                 }
             } catch(e) {
-                console.error(e);
                 alert("❌ Erreur de connexion avec le serveur.");
             }
         }
