@@ -1,0 +1,16 @@
+{
+  "name": "Charge Point VIP Investissement",
+  "short_name": "Charge Point",
+  "description": "Application d'investissement et de gestion Charge Point",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "9C08CD79-3FBF-4DE5-AA44-0C19CDC9756E.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
