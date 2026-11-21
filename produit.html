@@ -92,7 +92,7 @@
                             <div><p class="text-[9px] font-black text-gray-400 uppercase">Gain / 24H</p><p class="font-black text-green-600 text-sm">${vip.daily.toLocaleString()} CDF</p></div>
                             <div><p class="text-[9px] font-black text-gray-400 uppercase">Gain Total (22j)</p><p class="font-black text-gray-800 text-sm">${totalProfit.toLocaleString()} CDF</p></div>
                         </div>
-                        <button onclick="acheterProduit(${vip.id}, ${vip.price}, ${vip.daily}, '${vip.img}')" class="btn-buy">Acheter & Installer</button>
+                        <button id="btn-buy-${vip.id}" onclick="acheterProduit(${vip.id}, ${vip.price}, ${vip.daily}, '${vip.img}')" class="btn-buy">Acheter & Installer</button>
                     </div>
                 </div>
             `;
@@ -114,43 +114,142 @@
             }
         }
 
-        // Système d'achat sécurisé
+        // Système d'achat sécurisé avec commissions automatiques LV1 (25%), LV2 (2%), LV3 (1%)
         async function acheterProduit(id, prix, gain, imageSrc) {
-            const response = await fetch(`${dbURL}/utilisateurs/${session.firebaseId}.json`);
-            const user = await response.json();
+            const btn = document.getElementById(`btn-buy-${id}`);
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "TRAITEMENT EN COURS...";
+            }
 
-            if (user.solde >= prix) {
-                const nouveauSolde = user.solde - prix;
-                
-                const achat = {
-                    vipId: id,
-                    nom: "Pompe VIP " + id,
-                    img: imageSrc,
-                    gainJournalier: gain,
-                    dateAchat: new Date().toISOString(),
-                    expireLe: new Date(Date.now() + 22 * 24 * 60 * 60 * 1000).toISOString(),
-                    dernierCollecte: new Date().toISOString()
-                };
+            try {
+                const allRes = await fetch(`${dbURL}/utilisateurs.json`);
+                const allUsers = await allRes.json();
 
-                // Déduire le solde
-                await fetch(`${dbURL}/utilisateurs/${session.firebaseId}.json`, {
-                    method: 'PATCH',
-                    body: JSON.stringify({ 
-                        solde: nouveauSolde,
-                        droitRetrait: true 
-                    })
-                });
+                if (!allUsers) {
+                    alert("❌ Impossible de charger les données utilisateur.");
+                    if (btn) { btn.disabled = false; btn.innerText = "Acheter & Installer"; }
+                    return;
+                }
 
-                // Ajouter l'investissement
-                await fetch(`${dbURL}/investissements/${session.firebaseId}.json`, {
-                    method: 'POST',
-                    body: JSON.stringify(achat)
-                });
+                let buyerId = session.firebaseId;
+                let user = buyerId ? allUsers[buyerId] : null;
 
-                alert(`🎉 Succès ! Votre pompe VIP ${id} est installée et commence à produire.`);
-                window.location.href = "mes_produits.html";
-            } else {
-                alert("❌ Solde insuffisant ! Veuillez recharger votre compte.");
+                if (!user && session.telephone) {
+                    for (let uId in allUsers) {
+                        if (allUsers[uId].telephone === session.telephone) {
+                            buyerId = uId;
+                            user = allUsers[uId];
+                            break;
+                        }
+                    }
+                }
+
+                if (!buyerId || !user) {
+                    alert("❌ Session utilisateur introuvable. Veuillez vous reconnecter.");
+                    if (btn) { btn.disabled = false; btn.innerText = "Acheter & Installer"; }
+                    return;
+                }
+
+                const currentSolde = Number(user.solde || 0);
+
+                if (currentSolde >= prix) {
+                    const nouveauSolde = currentSolde - prix;
+
+                    const achat = {
+                        vipId: id,
+                        nom: "Pompe VIP " + id,
+                        img: imageSrc,
+                        gainJournalier: gain,
+                        dateAchat: new Date().toISOString(),
+                        expireLe: new Date(Date.now() + 22 * 24 * 60 * 60 * 1000).toISOString(),
+                        dernierCollecte: new Date().toISOString()
+                    };
+
+                    // Déduire le solde de l'acheteur
+                    await fetch(`${dbURL}/utilisateurs/${buyerId}.json`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            solde: nouveauSolde,
+                            droitRetrait: true
+                        })
+                    });
+
+                    // Ajouter l'investissement
+                    await fetch(`${dbURL}/investissements/${buyerId}.json`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(achat)
+                    });
+
+                    // Versement automatique des commissions aux parrains (LV1: 25%, LV2: 2%, LV3: 1%)
+                    const taux = [0.25, 0.02, 0.01];
+                    let currentParrainCode = String(user.parrain || "").trim().toLowerCase();
+                    let commissionDirecteLV1 = 0;
+
+                    for (let niveau = 0; niveau < 3; niveau++) {
+                        if (!currentParrainCode) break;
+
+                        let parrainId = null;
+                        let parrainData = null;
+
+                        for (let uId in allUsers) {
+                            const candidateCode = String(allUsers[uId].inviteCode || "").trim().toLowerCase();
+                            if (candidateCode && candidateCode === currentParrainCode) {
+                                parrainId = uId;
+                                parrainData = allUsers[uId];
+                                break;
+                            }
+                        }
+
+                        if (parrainId && parrainData) {
+                            const commission = Math.round(Number(prix) * taux[niveau]);
+                            const nouveauSoldeParrain = Number(parrainData.solde || 0) + commission;
+                            const nouveauRevenuEquipe = Number(parrainData.revenuEquipe || 0) + commission;
+
+                            await fetch(`${dbURL}/utilisateurs/${parrainId}.json`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    solde: nouveauSoldeParrain,
+                                    revenuEquipe: nouveauRevenuEquipe
+                                })
+                            });
+
+                            if (niveau === 0) {
+                                commissionDirecteLV1 = commission;
+                            }
+
+                            allUsers[parrainId].solde = nouveauSoldeParrain;
+                            allUsers[parrainId].revenuEquipe = nouveauRevenuEquipe;
+                            currentParrainCode = String(parrainData.parrain || "").trim().toLowerCase();
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if (commissionDirecteLV1 > 0) {
+                        const nouveauCumulFilleul = Number(user.commissionsGenerees || 0) + commissionDirecteLV1;
+                        await fetch(`${dbURL}/utilisateurs/${buyerId}.json`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                commissionsGenerees: nouveauCumulFilleul
+                            })
+                        });
+                    }
+
+                    alert(`🎉 Succès ! Votre pompe VIP ${id} est installée et commence à produire.`);
+                    window.location.href = "mes_produits.html";
+                } else {
+                    alert("❌ Solde insuffisant ! Veuillez recharger votre compte.");
+                    if (btn) { btn.disabled = false; btn.innerText = "Acheter & Installer"; }
+                }
+            } catch (e) {
+                console.error(e);
+                alert("❌ Erreur de connexion avec le serveur.");
+                if (btn) { btn.disabled = false; btn.innerText = "Acheter & Installer"; }
             }
         }
 
