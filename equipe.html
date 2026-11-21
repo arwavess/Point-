@@ -40,12 +40,12 @@
         <div class="grid grid-cols-2 gap-4">
             <div class="glass-card p-5 text-center">
                 <i class="fa-solid fa-coins text-orange-500 text-xl mb-2"></i>
-                <p class="text-[9px] font-black text-gray-400 uppercase">Commissions</p>
+                <p class="text-[9px] font-black text-gray-400 uppercase">Commissions Reçues</p>
                 <p id="totalComm" class="text-xl font-black text-orange-500">0 CDF</p>
             </div>
             <div class="glass-card p-5 text-center">
                 <i class="fa-solid fa-users text-gray-800 text-xl mb-2"></i>
-                <p class="text-[9px] font-black text-gray-400 uppercase">Membres</p>
+                <p class="text-[9px] font-black text-gray-400 uppercase">Total Membres</p>
                 <p id="totalTeam" class="text-xl font-black text-gray-900">0</p>
             </div>
         </div>
@@ -75,8 +75,7 @@
 
         if(!session) window.location.href = "index.html";
 
-        // Valeur par défaut en attendant la récupération de Firebase
-        let myInviteCode = "------";
+        let myInviteCode = "";
 
         function copyInvite() {
             navigator.clipboard.writeText(document.getElementById('linkSpan').innerText);
@@ -95,50 +94,54 @@
             try {
                 const res = await fetch(`${dbURL}/utilisateurs.json`);
                 const allUsers = await res.json();
-                
-                // 1. Récupération du champ exact "inviteCode" (ex: xcendj) dans Firebase pour l'utilisateur connecté[span_0](start_span)[span_0](end_span)
+                let currentUser = null;
+
                 if (allUsers) {
                     for (let id in allUsers) {
-                        // On identifie le nœud de l'utilisateur actif grâce à son numéro de téléphone
                         if (allUsers[id].telephone === session.telephone) {
-                            if (allUsers[id].inviteCode) {
-                                myInviteCode = allUsers[id].inviteCode;
-                                
-                                // Mise à jour de l'interface avec les données extraites
-                                document.getElementById('codeSpan').innerText = myInviteCode;
-                                document.getElementById('linkSpan').innerText = "https://arwavess.github.io/Point-/register.html?ref=" + myInviteCode;
-                                
-                                // Optionnel : mise à jour de la session locale pour fluidifier les prochaines connexions
-                                session.inviteCode = myInviteCode;
-                                localStorage.setItem('sonny_session', JSON.stringify(session));
-                            }
+                            currentUser = allUsers[id];
+                            myInviteCode = currentUser.inviteCode || "";
+                            document.getElementById('codeSpan').innerText = myInviteCode || "---";
+                            document.getElementById('linkSpan').innerText = "https://arwavess.github.io/Point-/register.html?ref=" + myInviteCode;
                             break;
                         }
                     }
                 }
 
-                let members = [];
-                let totalCommCalculated = 0;
+                let lv1Members = [];
+                let lv2Members = [];
+                let lv3Members = [];
 
-                // 2. Recherche des membres de l'équipe (ceux dont le 'parrain' correspond à l'inviteCode extrait)
-                if (myInviteCode !== "------") {
-                    for (let id in allUsers) {
-                        if (allUsers[id].parrain === myInviteCode) {
-                            members.push(allUsers[id]);
-                            totalCommCalculated += (allUsers[id].commissionsGenerees || 0);
-                        }
-                    }
+                if (myInviteCode && allUsers) {
+                    const usersArray = Object.values(allUsers);
+
+                    // 1. Filtrer LV1
+                    lv1Members = usersArray.filter(u => u.parrain === myInviteCode);
+
+                    // 2. Filtrer LV2 (ceux parrainés par les LV1)
+                    const lv1Codes = lv1Members.map(u => u.inviteCode).filter(Boolean);
+                    lv2Members = usersArray.filter(u => lv1Codes.includes(u.parrain));
+
+                    // 3. Filtrer LV3 (ceux parrainés par les LV2)
+                    const lv2Codes = lv2Members.map(u => u.inviteCode).filter(Boolean);
+                    lv3Members = usersArray.filter(u => lv2Codes.includes(u.parrain));
                 }
 
-                if (members.length === 0) {
+                // Sélectionner la liste selon l'onglet cliqué
+                let displayedMembers = lvl === 1 ? lv1Members : (lvl === 2 ? lv2Members : lv3Members);
+
+                if (displayedMembers.length === 0) {
                     list.innerHTML = `<div class="flex flex-col items-center justify-center py-10 opacity-30">
                         <i class="fa-solid fa-user-group text-4xl mb-3 text-gray-400"></i>
                         <p class="text-[10px] font-black uppercase text-gray-500">Aucun membre au niveau ${lvl}</p>
                     </div>`;
                 } else {
                     list.innerHTML = "";
-                    members.forEach(m => {
+                    displayedMembers.forEach(m => {
                         const maskPhone = m.telephone ? m.telephone.substring(0, 7) + "****" : "Utilisateur";
+                        // Pour LV1 on affiche la commission générée directe
+                        const commText = lvl === 1 ? `+${(m.commissionsGenerees || 0).toLocaleString()} CDF` : `Niveau ${lvl}`;
+                        
                         list.innerHTML += `
                             <div class="member-item">
                                 <div>
@@ -146,16 +149,20 @@
                                     <p class="text-[9px] text-gray-400 font-bold uppercase">${m.dateInscription || 'Membre Actif'}</p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-xs font-black text-green-600">+${(m.commissionsGenerees || 0).toLocaleString()} CDF</p>
-                                    <p class="text-[8px] text-gray-400 font-black uppercase">Commission</p>
+                                    <p class="text-xs font-black text-green-600">${commText}</p>
+                                    <p class="text-[8px] text-gray-400 font-black uppercase">Statut</p>
                                 </div>
                             </div>
                         `;
                     });
                 }
 
-                document.getElementById('totalTeam').innerText = members.length;
-                document.getElementById('totalComm').innerText = totalCommCalculated.toLocaleString() + " CDF";
+                // Mise à jour des compteurs globaux
+                const totalMembers = lv1Members.length + lv2Members.length + lv3Members.length;
+                const totalEarned = currentUser ? (currentUser.revenuEquipe || 0) : 0;
+
+                document.getElementById('totalTeam').innerText = totalMembers;
+                document.getElementById('totalComm').innerText = totalEarned.toLocaleString() + " CDF";
 
             } catch (e) {
                 console.error(e);
